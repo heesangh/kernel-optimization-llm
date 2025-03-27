@@ -181,7 +181,9 @@ set(Eigen_SOURCE_DIR ${Eigen3_SOURCE_DIR})
 set(Eigen_BINARY_DIR ${Eigen3_BINARY_DIR})
 
 # Imported target support
-add_library (eigen INTERFACE)
+add_library (eigen INTERFACE
+        main.cpp
+)
 add_library (Eigen3::Eigen ALIAS eigen)
 target_include_directories (eigen INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -384,11 +386,16 @@ if (EIGEN_BUILD_TESTING)
     ei_add_cxx_compiler_flag("-Wno-psabi")
     ei_add_cxx_compiler_flag("-Wno-variadic-macros")
     ei_add_cxx_compiler_flag("-Wno-long-long")
-    ei_add_cxx_compiler_flag("-fno-check-new")
     ei_add_cxx_compiler_flag("-fno-common")
     ei_add_cxx_compiler_flag("-fstrict-aliasing")
     ei_add_cxx_compiler_flag("-wd981")                    # disable ICC's "operands are evaluated in unspecified order" remark
     ei_add_cxx_compiler_flag("-wd2304")                   # disable ICC's "warning #2304: non-explicit constructor with single argument may cause implicit type conversion" produced by -Wnon-virtual-dtor
+
+    # Clang emits warnings about unused flag.
+    if (NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+      ei_add_cxx_compiler_flag("-fno-check-new")
+    endif()
+
 
     if(ANDROID_NDK)
       ei_add_cxx_compiler_flag("-pie")
@@ -778,3 +785,5 @@ endif()
 message(STATUS "")
 message(STATUS "Configured Eigen ${EIGEN_VERSION_NUMBER}")
 message(STATUS "")
+
+add_executable(main main.cpp)

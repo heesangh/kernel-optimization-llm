@@ -10,6 +10,7 @@
 #ifndef EIGEN_CONSERVATIVESPARSESPARSEPRODUCT_H
 #define EIGEN_CONSERVATIVESPARSESPARSEPRODUCT_H
 
+
 // IWYU pragma: private
 #include "./InternalHeaderCheck.h"
 
@@ -20,6 +21,14 @@ namespace internal {
 template <typename Lhs, typename Rhs, typename ResultType>
 static void conservative_sparse_sparse_product_impl(const Lhs& lhs, const Rhs& rhs, ResultType& res,
                                                     bool sortedInsertion = false) {
+
+  auto t1 = std::chrono::high_resolution_clock::now();
+  while (true) {
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+    if (dur.count() > 1000) break;
+  }
+
   typedef typename remove_all_t<Lhs>::Scalar LhsScalar;
   typedef typename remove_all_t<Rhs>::Scalar RhsScalar;
   typedef typename remove_all_t<ResultType>::Scalar ResScalar;
